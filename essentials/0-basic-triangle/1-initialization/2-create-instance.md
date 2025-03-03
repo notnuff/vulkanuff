@@ -1,0 +1,3 @@
+- initializing all is done via structs
+- vkCreateInstance
+- extensions: 

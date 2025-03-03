@@ -1,0 +1,6 @@
+#ifndef VK_FRAMES_IN_FLIGHT_H
+#define VK_FRAMES_IN_FLIGHT_H
+
+const int MAX_FRAMES_IN_FLIGHT = 2;
+
+#endif //VK_FRAMES_IN_FLIGHT_H

@@ -1,0 +1,2 @@
+- anything from drawing to uploading textures, requires commands to be submitted to a queue. 
+- There are different types of queues that originate from different queue families and each family of queues allows only a subset of commands. 

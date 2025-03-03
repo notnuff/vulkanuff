@@ -1,0 +1,2 @@
+- Vulkan uses bytecode SPIR-V
+- shader stages are fully programmable
