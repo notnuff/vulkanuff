@@ -4,10 +4,6 @@
 
 #include "../../vk_context.h"
 
-void VkCtxBuilderI::SetCtx(VkContext* targetCtx) {
-  pCtx = targetCtx;
-}
-
 void VkCtxBuilderI::Build() {
   if (!pCtx) throw std::runtime_error("pTargetContext is null");
 

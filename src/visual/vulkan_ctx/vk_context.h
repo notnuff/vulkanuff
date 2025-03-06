@@ -11,6 +11,8 @@
 #include <optional>
 #include <vector>
 
+
+class VkBuffersManager;
 class VkCtxBuildDirector;
 
 class VkContext {
@@ -26,6 +28,8 @@ protected:
   void RecordCommandBuffer(VkCommandBuffer commandBuffer,
     uint32_t imageIndex);
 
+protected:
+  void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 public:
   VkInstance instance;
@@ -58,9 +62,6 @@ public:
 
   VkCommandPool commandPool;
 
-  VkBuffer vertexBuffer;
-  VkDeviceMemory vertexBufferMemory;
-
   // need vector of buffers to be able to generate frames in flight
   std::vector<VkCommandBuffer> commandBuffers;
 
@@ -75,8 +76,10 @@ public:
 
   VkCtxBuildDirector* pCreator = nullptr;
 
-protected:
+public:
+  std::shared_ptr<VkBuffersManager> pBuffersManager = nullptr;
 
+protected:
   friend class VkCtxBuilderI;
 };
 

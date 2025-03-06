@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 
+class VkBuffersManager;
 class VkCtxBuilderI;
 class VkContext;
 
@@ -32,6 +33,9 @@ protected:
   template<typename T>
   requires std::derived_from<T, VkCtxBuilderI>
   void CreateAndPushBuilder();
+
+protected:
+  std::shared_ptr<VkBuffersManager> CreateBuffersManager(VkContext* forCtx);
 
 protected:
   std::vector<std::shared_ptr<VkCtxBuilderI>> buildersContainer;

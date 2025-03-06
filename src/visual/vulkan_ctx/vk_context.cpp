@@ -10,15 +10,20 @@
 #include "initialization/builders/image_views/vk_image_views_builder.h"
 #include "initialization/builders/shared/vk_frames_in_flight.h"
 #include "initialization/builders/swap_chain/vk_swap_chain_builder.h"
-#include "initialization/builders/vertex_buffers/vk_vertex_buffer_builder.h"
+#include "buffers/vk_vertex_buffer_factory.h"
+#include "buffers/vk_buffers_manager.h"
 
 void VkContext::DrawFrame() {
-
   void* data;
-  const auto& bufferInfo = pCreator->GetBuilderByType<VkVertexBufferBuilder>()->GetVkBufferCreateInfo();
-  vkMapMemory(device, vertexBufferMemory, 0, bufferInfo.size, 0, &data);
-  memcpy(data, testVertices.data(), (size_t) bufferInfo.size);
-  vkUnmapMemory(device, vertexBufferMemory);
+  auto buffersSize = sizeof(testVertices[0]) * testVertices.size();
+  const auto& stagingBufferWrapper = pBuffersManager->GetStagingBufferWrapper(buffersSize);
+  const auto& vertexBufferWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
+
+  vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
+  memcpy(data, testVertices.data(), (size_t) buffersSize);
+  vkUnmapMemory(device, stagingBufferWrapper->Memory);
+
+  CopyBuffer(stagingBufferWrapper->Buffer, vertexBufferWrapper->Buffer, buffersSize);
 
   vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -155,7 +160,10 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
 
   vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-  VkBuffer vertexBuffers[] = {vertexBuffer};
+  auto buffersSize = sizeof(testVertices[0]) * testVertices.size();
+  auto vertexBufferMemoryWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
+
+  VkBuffer vertexBuffers[] = { vertexBufferMemoryWrapper->Buffer };
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
@@ -167,6 +175,46 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
   if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
     throw std::runtime_error("failed to record command buffer!");
   }
+}
+
+void VkContext::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer,
+    VkDeviceSize size) {
+
+  // temp command buffer to execute our copy command
+  VkCommandBufferAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandPool = commandPool;
+  allocInfo.commandBufferCount = 1;
+
+  VkCommandBuffer commandBuffer;
+  vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+  VkCommandBufferBeginInfo beginInfo{};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+  vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+  VkBufferCopy copyRegion{};
+  copyRegion.srcOffset = 0; // Optional
+  copyRegion.dstOffset = 0; // Optional
+  copyRegion.size = size;
+  vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+  if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+    throw std::runtime_error("failed to copy buffer!");
+  }
+
+  VkSubmitInfo submitInfo{};
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffer;
+
+  vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+  vkQueueWaitIdle(graphicsQueue);
+
+  vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
 void VkContext::FramebufferResizeCallback(GLFWwindow* window, int width, int height) {

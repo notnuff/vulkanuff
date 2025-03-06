@@ -16,7 +16,7 @@
 #include "builders/surface/vk_surface_builder.h"
 #include "builders/swap_chain/vk_swap_chain_builder.h"
 #include "builders/sync_objects/vk_sync_objects_builder.h"
-#include "builders/vertex_buffers/vk_vertex_buffer_builder.h"
+#include "../buffers/vk_buffers_manager.h"
 
 VkCtxBuildDirector::VkCtxBuildDirector() { InitBuilders(); }
 
@@ -32,7 +32,6 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkGraphicsPipelineBuilder>();
   CreateAndPushBuilder<VkFramebuffersBuilder>();
   CreateAndPushBuilder<VkCommandPoolBuilder>();
-  CreateAndPushBuilder<VkVertexBufferBuilder>();
   CreateAndPushBuilder<VkCommandBuffersBuilder>();
   CreateAndPushBuilder<VkSyncObjectsBuilder>();
 }
@@ -44,8 +43,10 @@ VkContext* VkCtxBuildDirector::CreateContext() {
   context->SetWindowAndResizeCallback(pTargetWindow);
   context->pCreator = this;
 
+  context->pBuffersManager = CreateBuffersManager(context);
+
   for(const auto& builder : buildersContainer) {
-    builder->SetCtx(context);
+    builder->Context(context);
     builder->Build();
   }
 
@@ -57,10 +58,20 @@ void VkCtxBuildDirector::DestroyContext(VkContext* ctx) {
   vkQueueWaitIdle(ctx->presentQueue);
 
   for(auto it = buildersContainer.rbegin(); it != buildersContainer.rend(); ++it) {
-    (*it)->SetCtx(ctx);
+    (*it)->Context(ctx);
     (*it)->Destroy();
   }
 }
+
+std::shared_ptr<VkBuffersManager> VkCtxBuildDirector::CreateBuffersManager(VkContext* forCtx) {
+  auto buffersManager = std::make_shared<VkBuffersManager>();
+  buffersManager->Context(forCtx);
+  buffersManager->Init();
+
+  return buffersManager;
+
+}
+
 
 void VkCtxBuildDirector::SetWindow(GLFWwindow* window) {
   pTargetWindow = window;
