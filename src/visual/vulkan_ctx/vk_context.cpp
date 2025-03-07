@@ -14,16 +14,9 @@
 #include "buffers/vk_buffers_manager.h"
 
 void VkContext::DrawFrame() {
-  void* data;
-  auto buffersSize = sizeof(testVertices[0]) * testVertices.size();
-  const auto& stagingBufferWrapper = pBuffersManager->GetStagingBufferWrapper(buffersSize);
-  const auto& vertexBufferWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
-
-  vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
-  memcpy(data, testVertices.data(), (size_t) buffersSize);
-  vkUnmapMemory(device, stagingBufferWrapper->Memory);
-
-  CopyBuffer(stagingBufferWrapper->Buffer, vertexBufferWrapper->Buffer, buffersSize);
+  PerformTransforms();
+  PerformVertexBufferCopying();
+  PerformIndexBufferCopying();
 
   vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -36,54 +29,16 @@ void VkContext::DrawFrame() {
   } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
     throw std::runtime_error("failed to acquire swap chain image!");
   }
-  vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
+  vkResetFences(device, 1, &inFlightFences[currentFrame]);
   vkResetCommandBuffer(commandBuffers[currentFrame], 0);
 
-  // TODO: maybe move RecordCommandBuffer from VkCommandBuffersBuilder somewhere else
-  // pCreator->GetBuilderByType<VkCommandBuffersBuilder>()->RecordCommandBuffer(commandBuffers[currentFrame], imageIndex);
-
   RecordCommandBuffer(commandBuffers[currentFrame], imageIndex);
-
-  VkSubmitInfo submitInfo{};
-  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-  VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
-  VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-  submitInfo.waitSemaphoreCount = 1;
-  submitInfo.pWaitSemaphores = waitSemaphores;
-  submitInfo.pWaitDstStageMask = waitStages;
-
-  submitInfo.commandBufferCount = 1;
-  submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
-
-  VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
-  submitInfo.signalSemaphoreCount = 1;
-  submitInfo.pSignalSemaphores = signalSemaphores;
-
-  if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame] ) != VK_SUCCESS) {
-    throw std::runtime_error("failed to submit draw command buffer!");
-  }
-
-  VkPresentInfoKHR presentInfo{};
-  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
-  presentInfo.waitSemaphoreCount = 1;
-  presentInfo.pWaitSemaphores = signalSemaphores;
-
-  VkSwapchainKHR swapChains[] = {swapChain};
-  presentInfo.swapchainCount = 1;
-  presentInfo.pSwapchains = swapChains;
-  presentInfo.pImageIndices = &imageIndex;
-
-  presentInfo.pResults = nullptr; // Optional
-
-  result = vkQueuePresentKHR(presentQueue, &presentInfo);
+  result = PerformSubmitDrawCommandsAndPresent(commandBuffers[currentFrame], imageIndex);
 
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
     RecreateSwapChain();
     framebufferResized = false;
-
   } else if (result != VK_SUCCESS) {
     throw std::runtime_error("failed to acquire swap chain image!");
   }
@@ -167,7 +122,12 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-  vkCmdDraw(commandBuffer, static_cast<uint32_t>(testVertices.size()), 1, 0, 0);
+  auto indexBufferSize = sizeof(testIndices[0]) * testIndices.size();
+  auto indexBufferMemoryWrapper = pBuffersManager->GetIndexBufferWrapper(indexBufferSize);
+  vkCmdBindIndexBuffer(commandBuffer, indexBufferMemoryWrapper->Buffer, 0, VK_INDEX_TYPE_UINT32);
+
+  vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(testIndices.size()), 1, 0, 0, 0);
+  // vkCmdDraw(commandBuffer, static_cast<uint32_t>(testVertices.size()), 1, 0, 0);
   // vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
   vkCmdEndRenderPass(commandBuffer);
@@ -177,8 +137,90 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
   }
 }
 
+void VkContext::PerformTransforms() {
+  for(auto& test_vertex : testVertices) {
+    auto deltaAngleRadians = glm::radians(1.0);
+    deltaAngleRadians *= 0.05;
+
+    const auto x = test_vertex.pos.x;
+    const auto y = test_vertex.pos.y;
+    const auto sin = glm::sin(deltaAngleRadians);
+    const auto cos = glm::cos(deltaAngleRadians);
+
+    test_vertex.pos.x = x * cos - y * sin;
+    test_vertex.pos.y = x * sin + y * cos;
+  }
+}
+
+void VkContext::PerformVertexBufferCopying() {
+  void* data;
+  auto buffersSize = sizeof(testVertices[0]) * testVertices.size();
+
+  const auto& stagingBufferWrapper = pBuffersManager->GetStagingBufferWrapper(buffersSize);
+  const auto& vertexBufferWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
+
+  vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
+  memcpy(data, testVertices.data(), (size_t) buffersSize);
+  vkUnmapMemory(device, stagingBufferWrapper->Memory);
+
+  CopyBuffer(stagingBufferWrapper->Buffer, vertexBufferWrapper->Buffer, buffersSize);
+
+}
+
+void VkContext::PerformIndexBufferCopying() {
+  auto buffersSize = sizeof(testIndices[0]) * testIndices.size();
+
+  const auto& stagingBufferWrapper = pBuffersManager->GetStagingBufferWrapper(buffersSize);
+  const auto& indexBufferWrapper = pBuffersManager->GetIndexBufferWrapper(buffersSize);
+
+  void* data;
+  vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
+  memcpy(data, testIndices.data(), (size_t) buffersSize);
+  vkUnmapMemory(device, stagingBufferWrapper->Memory);
+
+  CopyBuffer(stagingBufferWrapper->Buffer, indexBufferWrapper->Buffer, buffersSize);
+}
+
+VkResult VkContext::PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands, uint32_t imageIndex) {
+  VkSubmitInfo submitInfo{};
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+  VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
+  VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+  submitInfo.waitSemaphoreCount = 1;
+  submitInfo.pWaitSemaphores = waitSemaphores;
+  submitInfo.pWaitDstStageMask = waitStages;
+
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commands;
+
+  VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+  submitInfo.signalSemaphoreCount = 1;
+  submitInfo.pSignalSemaphores = signalSemaphores;
+
+  if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame] ) != VK_SUCCESS) {
+    throw std::runtime_error("failed to submit draw command buffer!");
+  }
+
+  VkPresentInfoKHR presentInfo{};
+  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+  presentInfo.waitSemaphoreCount = 1;
+  presentInfo.pWaitSemaphores = signalSemaphores;
+
+  VkSwapchainKHR swapChains[] = {swapChain};
+  presentInfo.swapchainCount = 1;
+  presentInfo.pSwapchains = swapChains;
+  presentInfo.pImageIndices = &imageIndex;
+
+  presentInfo.pResults = nullptr; // Optional
+
+  return vkQueuePresentKHR(presentQueue, &presentInfo);
+}
+
+
 void VkContext::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer,
-    VkDeviceSize size) {
+                           VkDeviceSize size) {
 
   // temp command buffer to execute our copy command
   VkCommandBufferAllocateInfo allocInfo{};

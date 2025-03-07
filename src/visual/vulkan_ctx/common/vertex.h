@@ -41,10 +41,7 @@ struct Vertex {
 
 };
 
-const std::vector<Vertex> testVertices = {
-  {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-  {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-  {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
-};
+extern std::vector<Vertex> testVertices;
+extern std::vector<uint32_t> testIndices;
 
 #endif //VERTEX_H

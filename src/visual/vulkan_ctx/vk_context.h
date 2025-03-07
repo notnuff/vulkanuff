@@ -29,6 +29,12 @@ protected:
     uint32_t imageIndex);
 
 protected:
+  void PerformTransforms();
+  void PerformVertexBufferCopying();
+  void PerformIndexBufferCopying();
+  VkResult PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands, uint32_t imageIndex);
+
+protected:
   void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 public:
@@ -82,7 +88,5 @@ public:
 protected:
   friend class VkCtxBuilderI;
 };
-
-
 
 #endif //VK_CONTEXT_H

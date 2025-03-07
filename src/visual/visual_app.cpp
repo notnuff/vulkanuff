@@ -1,6 +1,7 @@
 #include "visual_app.h"
 
 #include "vulkan_ctx/vk_context.h"
+#include "vulkan_ctx/buffers/vk_buffers_manager.h"
 #include "vulkan_ctx/initialization/vk_ctx_build_director.h"
 
 #define WIN_WIDTH 1280
@@ -34,6 +35,10 @@ void VisualApp::InitVulkan() {
 }
 
 void VisualApp::DestroyVulkan() {
+  vkQueueWaitIdle(vkCtx->graphicsQueue);
+  vkQueueWaitIdle(vkCtx->presentQueue);
+
+  vkCtx->pBuffersManager->Destroy();
   vkCtxBuildDirector->DestroyContext(vkCtx);
 }
 
@@ -50,5 +55,6 @@ void VisualApp::MainLoop() {
 }
 
 void VisualApp::Cleanup() {
-
+  DestroyVulkan();
+  DestroyWindow();
 }

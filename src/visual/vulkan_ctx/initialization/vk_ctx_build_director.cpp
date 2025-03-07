@@ -18,7 +18,7 @@
 #include "builders/sync_objects/vk_sync_objects_builder.h"
 #include "../buffers/vk_buffers_manager.h"
 
-VkCtxBuildDirector::VkCtxBuildDirector() { InitBuilders(); }
+VkCtxBuildDirector::VkCtxBuildDirector() {}
 
 void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkDebugInstanceBuilder>();
