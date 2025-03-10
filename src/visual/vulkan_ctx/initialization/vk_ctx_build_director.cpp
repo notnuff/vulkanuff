@@ -18,6 +18,9 @@
 #include "builders/sync_objects/vk_sync_objects_builder.h"
 #include "builders/descriptor_set_layout/vk_descriptor_set_layout_builder.h"
 #include "../buffers/vk_buffers_manager.h"
+#include "builders/buffers_builder/vk_buffers_builder.h"
+#include "builders/descriptor_pool/vk_descriptor_pool_builder.h"
+#include "builders/descriptor_sets/vk_descriptor_sets_builder.h"
 
 VkCtxBuildDirector::VkCtxBuildDirector() {}
 
@@ -31,7 +34,12 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkImageViewsBuilder>();
   CreateAndPushBuilder<VkRenderPassBuilder>();
 
+  CreateAndPushBuilder<VkBuffersBuilder>();
+
   CreateAndPushBuilder<VkDescriptorSetLayoutBuilder>();
+  CreateAndPushBuilder<VkDescriptorPoolBuilder>();
+  CreateAndPushBuilder<VkDescriptorSetsBuilder>();
+
   CreateAndPushBuilder<VkGraphicsPipelineBuilder>();
 
   CreateAndPushBuilder<VkFramebuffersBuilder>();
@@ -47,13 +55,11 @@ VkContext* VkCtxBuildDirector::CreateContext() {
   context->SetWindowAndResizeCallback(pTargetWindow);
   context->pCreator = this;
 
-
   for(const auto& builder : buildersContainer) {
     builder->Context(context);
     builder->Build();
   }
 
-  context->pBuffersManager = CreateBuffersManager(context);
 
   return context;
 }
@@ -67,16 +73,6 @@ void VkCtxBuildDirector::DestroyContext(VkContext* ctx) {
     (*it)->Destroy();
   }
 }
-
-std::shared_ptr<VkBuffersManager> VkCtxBuildDirector::CreateBuffersManager(VkContext* forCtx) {
-  auto buffersManager = std::make_shared<VkBuffersManager>();
-  buffersManager->Context(forCtx);
-  buffersManager->Init();
-
-  return buffersManager;
-
-}
-
 
 void VkCtxBuildDirector::SetWindow(GLFWwindow* window) {
   pTargetWindow = window;

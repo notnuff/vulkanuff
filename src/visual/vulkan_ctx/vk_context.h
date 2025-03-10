@@ -76,12 +76,11 @@ public:
 
   VkCommandPool commandPool;
 
+  VkDescriptorPool descriptorPool;
+  std::vector<VkDescriptorSet> descriptorSets;
+
   // need vector of buffers to be able to generate frames in flight
   std::vector<VkCommandBuffer> commandBuffers;
-
-  std::vector<VkBuffer> uniformBuffers;
-  std::vector<VkDeviceMemory> uniformBuffersMemories;
-  std::vector<void*> uniformBuffersMappedMemory;
 
   // need vectors of semaphores and fences to be able to generate frames in flight
   std::vector<VkSemaphore> imageAvailableSemaphores;

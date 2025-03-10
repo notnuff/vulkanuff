@@ -139,7 +139,7 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
   auto indexBufferMemoryWrapper = pBuffersManager->GetIndexBufferWrapper(indexBufferSize);
   vkCmdBindIndexBuffer(commandBuffer, indexBufferMemoryWrapper->Buffer, 0, VK_INDEX_TYPE_UINT32);
 
-
+  vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
   vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(testIndices.size()), 1, 0, 0, 0);
   // vkCmdDraw(commandBuffer, static_cast<uint32_t>(testVertices.size()), 1, 0, 0);
   // vkCmdDraw(commandBuffer, 3, 1, 0, 0);

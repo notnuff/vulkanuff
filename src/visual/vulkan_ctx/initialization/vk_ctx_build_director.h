@@ -35,9 +35,6 @@ protected:
   void CreateAndPushBuilder();
 
 protected:
-  std::shared_ptr<VkBuffersManager> CreateBuffersManager(VkContext* forCtx);
-
-protected:
   std::vector<std::shared_ptr<VkCtxBuilderI>> buildersContainer;
 
 protected:
