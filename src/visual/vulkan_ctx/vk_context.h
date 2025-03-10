@@ -11,6 +11,8 @@
 #include <optional>
 #include <vector>
 
+#include "objects/vk_uniform_buffer_object.h"
+
 
 class VkBuffersManager;
 class VkCtxBuildDirector;
@@ -32,6 +34,10 @@ protected:
   void PerformTransforms();
   void PerformVertexBufferCopying();
   void PerformIndexBufferCopying();
+
+  void UpdateUniformBuffer();
+  void PerformUniformBufferCopying();
+
   VkResult PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands, uint32_t imageIndex);
 
 protected:
@@ -60,6 +66,8 @@ public:
   std::vector<VkImageView> swapChainImageViews;
 
   VkRenderPass renderPass;
+
+  VkDescriptorSetLayout descriptorSetLayout;
   VkPipelineLayout pipelineLayout;
 
   VkPipeline graphicsPipeline;
@@ -70,6 +78,10 @@ public:
 
   // need vector of buffers to be able to generate frames in flight
   std::vector<VkCommandBuffer> commandBuffers;
+
+  std::vector<VkBuffer> uniformBuffers;
+  std::vector<VkDeviceMemory> uniformBuffersMemories;
+  std::vector<void*> uniformBuffersMappedMemory;
 
   // need vectors of semaphores and fences to be able to generate frames in flight
   std::vector<VkSemaphore> imageAvailableSemaphores;
@@ -84,6 +96,10 @@ public:
 
 public:
   std::shared_ptr<VkBuffersManager> pBuffersManager = nullptr;
+
+protected:
+  UniformBufferObject ubo;
+
 
 protected:
   friend class VkCtxBuilderI;

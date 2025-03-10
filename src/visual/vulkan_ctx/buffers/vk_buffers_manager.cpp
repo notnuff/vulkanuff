@@ -2,10 +2,14 @@
 
 #include <ranges>
 
+#include "../initialization/builders/shared/vk_frames_in_flight.h"
+
 void VkBuffersManager::Init() {
   stagingBufferFactory.Context(pCtx);
   vertexBufferFactory.Context(pCtx);
   indexBufferFactory.Context(pCtx);
+
+  CreateUniformBuffers(MAX_FRAMES_IN_FLIGHT);
 }
 
 void VkBuffersManager::Destroy() {
@@ -14,6 +18,29 @@ void VkBuffersManager::Destroy() {
   }
   vertexBufferFactory.DestroyBuffer(*vertexBufferCache);
   indexBufferFactory.DestroyBuffer(*indexBufferCache);
+
+  DestroyUniformBuffers();
+}
+
+void VkBuffersManager::CreateUniformBuffers(int frames) {
+  uniformBufferFactory.Context(pCtx);
+
+  uniformBufferCache.resize(frames);
+
+  auto size = sizeof(VkMappedBufferWrapper);
+  for(auto& cache : uniformBufferCache) {
+    cache = std::make_shared<VkMappedBufferWrapper>();
+    cache->BufferWrapper = uniformBufferFactory.CreateBuffer(size);
+    vkMapMemory(pCtx->device, cache->BufferWrapper->Memory, 0, size, 0, &cache->MappedMemory);
+  }
+}
+
+void VkBuffersManager::DestroyUniformBuffers() {
+  for(auto& cache : uniformBufferCache) {
+    vkUnmapMemory(pCtx->device, cache->BufferWrapper->Memory);
+    uniformBufferFactory.DestroyBuffer(*cache->BufferWrapper);
+  }
+  uniformBufferCache.clear();
 }
 
 std::shared_ptr<VkBufferWrapper> VkBuffersManager::GetStagingBufferWrapper(
@@ -26,6 +53,13 @@ std::shared_ptr<VkBufferWrapper> VkBuffersManager::GetStagingBufferWrapper(
 
   return stagingBufferCache[size];
 }
+
+
+std::shared_ptr<VkMappedBufferWrapper> VkBuffersManager::GetUniformBufferWrapper(int frame) {
+  if (frame < 0 || frame >= uniformBufferCache.size() ) throw std::invalid_argument("invalid frame");
+
+  return uniformBufferCache[frame];
+};
 
 #define GetBufferWrapper(NAME, FUNC_NAME) \
 std::shared_ptr<VkBufferWrapper> VkBuffersManager::Get##FUNC_NAME##BufferWrapper(VkDeviceSize size) { \
@@ -42,7 +76,7 @@ std::shared_ptr<VkBufferWrapper> VkBuffersManager::Get##FUNC_NAME##BufferWrapper
 }
 
 GetBufferWrapper(vertex, Vertex);
-// GetBufferWrapper(staging, Staging);
-GetBufferWrapper(index, Index);
+GetBufferWrapper(index, Index)
+
 
 #undef GetBufferWrapper

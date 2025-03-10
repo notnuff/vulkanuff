@@ -2,6 +2,11 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <chrono>
+
 
 #include "common/vertex.h"
 #include "initialization/vk_ctx_build_director.h"
@@ -12,11 +17,19 @@
 #include "initialization/builders/swap_chain/vk_swap_chain_builder.h"
 #include "buffers/vk_vertex_buffer_factory.h"
 #include "buffers/vk_buffers_manager.h"
+#include "objects/vk_uniform_buffer_object.h"
 
 void VkContext::DrawFrame() {
-  PerformTransforms();
+  // PerformTransforms();
+
+  // oh fuck, we actually shouldn't copy this buffers every frame
+  // TODO: use dirty bit
   PerformVertexBufferCopying();
   PerformIndexBufferCopying();
+  // ~
+
+  UpdateUniformBuffer();
+  PerformUniformBufferCopying();
 
   vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -126,6 +139,7 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
   auto indexBufferMemoryWrapper = pBuffersManager->GetIndexBufferWrapper(indexBufferSize);
   vkCmdBindIndexBuffer(commandBuffer, indexBufferMemoryWrapper->Buffer, 0, VK_INDEX_TYPE_UINT32);
 
+
   vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(testIndices.size()), 1, 0, 0, 0);
   // vkCmdDraw(commandBuffer, static_cast<uint32_t>(testVertices.size()), 1, 0, 0);
   // vkCmdDraw(commandBuffer, 3, 1, 0, 0);
@@ -179,6 +193,22 @@ void VkContext::PerformIndexBufferCopying() {
   vkUnmapMemory(device, stagingBufferWrapper->Memory);
 
   CopyBuffer(stagingBufferWrapper->Buffer, indexBufferWrapper->Buffer, buffersSize);
+}
+
+void VkContext::UpdateUniformBuffer() {
+  static auto startTime = std::chrono::high_resolution_clock::now();
+
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  auto deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+  ubo.model = glm::rotate(glm::mat4(1.0f), deltaTime * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f, 10.0f);
+  ubo.proj[1][1] *= -1;
+}
+
+void VkContext::PerformUniformBufferCopying() {
+  memcpy(pBuffersManager->GetUniformBufferWrapper(currentFrame)->MappedMemory, &ubo, sizeof(ubo));
 }
 
 VkResult VkContext::PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands, uint32_t imageIndex) {

@@ -16,6 +16,7 @@
 #include "builders/surface/vk_surface_builder.h"
 #include "builders/swap_chain/vk_swap_chain_builder.h"
 #include "builders/sync_objects/vk_sync_objects_builder.h"
+#include "builders/descriptor_set_layout/vk_descriptor_set_layout_builder.h"
 #include "../buffers/vk_buffers_manager.h"
 
 VkCtxBuildDirector::VkCtxBuildDirector() {}
@@ -29,7 +30,10 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkSwapChainBuilder>();
   CreateAndPushBuilder<VkImageViewsBuilder>();
   CreateAndPushBuilder<VkRenderPassBuilder>();
+
+  CreateAndPushBuilder<VkDescriptorSetLayoutBuilder>();
   CreateAndPushBuilder<VkGraphicsPipelineBuilder>();
+
   CreateAndPushBuilder<VkFramebuffersBuilder>();
   CreateAndPushBuilder<VkCommandPoolBuilder>();
   CreateAndPushBuilder<VkCommandBuffersBuilder>();
@@ -43,12 +47,13 @@ VkContext* VkCtxBuildDirector::CreateContext() {
   context->SetWindowAndResizeCallback(pTargetWindow);
   context->pCreator = this;
 
-  context->pBuffersManager = CreateBuffersManager(context);
 
   for(const auto& builder : buildersContainer) {
     builder->Context(context);
     builder->Build();
   }
+
+  context->pBuffersManager = CreateBuffersManager(context);
 
   return context;
 }
