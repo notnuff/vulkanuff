@@ -21,6 +21,7 @@
 #include "builders/buffers_builder/vk_buffers_builder.h"
 #include "builders/descriptor_pool/vk_descriptor_pool_builder.h"
 #include "builders/descriptor_sets/vk_descriptor_sets_builder.h"
+#include "builders/images/vk_texture_image_builder.h"
 
 VkCtxBuildDirector::VkCtxBuildDirector() {}
 
@@ -44,6 +45,9 @@ void VkCtxBuildDirector::InitBuilders() {
 
   CreateAndPushBuilder<VkFramebuffersBuilder>();
   CreateAndPushBuilder<VkCommandPoolBuilder>();
+
+  CreateAndPushBuilder<VkTextureImageBuilder>();
+
   CreateAndPushBuilder<VkCommandBuffersBuilder>();
   CreateAndPushBuilder<VkSyncObjectsBuilder>();
 }

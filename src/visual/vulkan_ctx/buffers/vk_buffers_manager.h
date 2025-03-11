@@ -17,9 +17,13 @@ public:
   void Destroy();
 
   std::shared_ptr<VkBufferWrapper> GetVertexBufferWrapper(VkDeviceSize size);
+
+  std::shared_ptr<VkBufferWrapper> CreateUniqueStagingBufferWrapper(VkDeviceSize size);
   std::shared_ptr<VkBufferWrapper> GetStagingBufferWrapper(VkDeviceSize size);
+
   std::shared_ptr<VkBufferWrapper> GetIndexBufferWrapper(VkDeviceSize size);
   std::shared_ptr<VkMappedBufferWrapper> GetUniformBufferWrapper(int frame);
+
 
 protected:
   void CreateUniformBuffers(int frames);

@@ -55,6 +55,10 @@ std::shared_ptr<VkBufferWrapper> VkBuffersManager::GetStagingBufferWrapper(
 }
 
 
+std::shared_ptr<VkBufferWrapper> VkBuffersManager::CreateUniqueStagingBufferWrapper(VkDeviceSize size) {
+  return stagingBufferFactory.CreateBuffer(size);
+};
+
 std::shared_ptr<VkMappedBufferWrapper> VkBuffersManager::GetUniformBufferWrapper(int frame) {
   if (frame < 0 || frame >= uniformBufferCache.size() ) throw std::invalid_argument("invalid frame");
 
@@ -75,7 +79,8 @@ std::shared_ptr<VkBufferWrapper> VkBuffersManager::Get##FUNC_NAME##BufferWrapper
   return NAME##BufferCache; \
 }
 
-GetBufferWrapper(vertex, Vertex);
+GetBufferWrapper(vertex, Vertex)
+
 GetBufferWrapper(index, Index)
 
 

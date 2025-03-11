@@ -38,7 +38,6 @@ void VisualApp::DestroyVulkan() {
   vkQueueWaitIdle(vkCtx->graphicsQueue);
   vkQueueWaitIdle(vkCtx->presentQueue);
 
-  vkCtx->pBuffersManager->Destroy();
   vkCtxBuildDirector->DestroyContext(vkCtx);
 }
 

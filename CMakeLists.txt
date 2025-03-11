@@ -35,6 +35,9 @@ file(GLOB_RECURSE COMPILATION_UNITS CONFIGURE_DEPENDS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/third/stb)
+link_directories(${CMAKE_SOURCE_DIR}/third/stb)
+
 add_executable(${PROJECT_NAME}
         src/main.cpp
         ${COMPILATION_UNITS}
