@@ -27,7 +27,7 @@ void VkBuffersManager::CreateUniformBuffers(int frames) {
 
   uniformBufferCache.resize(frames);
 
-  auto size = sizeof(VkMappedBufferWrapper);
+  auto size = sizeof(UniformBufferObject);
   for(auto& cache : uniformBufferCache) {
     cache = std::make_shared<VkMappedBufferWrapper>();
     cache->BufferWrapper = uniformBufferFactory.CreateBuffer(size);
