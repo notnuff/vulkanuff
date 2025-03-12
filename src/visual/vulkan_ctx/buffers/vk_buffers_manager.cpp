@@ -57,6 +57,10 @@ std::shared_ptr<VkBufferWrapper> VkBuffersManager::GetStagingBufferWrapper(
 
 std::shared_ptr<VkBufferWrapper> VkBuffersManager::CreateUniqueStagingBufferWrapper(VkDeviceSize size) {
   return stagingBufferFactory.CreateBuffer(size);
+}
+
+void VkBuffersManager::DestroyUniqueStagingBufferWrapper(const std::shared_ptr<VkBufferWrapper>& buffer) {
+  stagingBufferFactory.DestroyBuffer(*buffer);
 };
 
 std::shared_ptr<VkMappedBufferWrapper> VkBuffersManager::GetUniformBufferWrapper(int frame) {

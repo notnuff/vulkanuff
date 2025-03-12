@@ -40,8 +40,18 @@ protected:
 
   VkResult PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands, uint32_t imageIndex);
 
+
+
 protected:
   void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+
+public:
+  void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+  void PerformImageLayoutTransition(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+
+protected:
+  VkCommandBuffer BeginFastCommand();
+  void EndFastCommand(const VkCommandBuffer& commandBuffer);
 
 public:
   VkInstance instance;
@@ -90,6 +100,11 @@ public:
   // will use current frame to check which frameOnFlight to use now
   uint32_t currentFrame = 0;
   bool framebufferResized = false;
+
+
+  VkImage textureImage;
+  VkDeviceMemory textureImageMemory;
+
 
   VkCtxBuildDirector* pCreator = nullptr;
 
