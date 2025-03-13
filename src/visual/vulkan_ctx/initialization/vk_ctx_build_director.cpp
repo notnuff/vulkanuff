@@ -40,8 +40,6 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkBuffersBuilder>();
 
   CreateAndPushBuilder<VkDescriptorSetLayoutBuilder>();
-  CreateAndPushBuilder<VkDescriptorPoolBuilder>();
-  CreateAndPushBuilder<VkDescriptorSetsBuilder>();
 
   CreateAndPushBuilder<VkGraphicsPipelineBuilder>();
 
@@ -51,6 +49,9 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkTextureImageBuilder>();
   CreateAndPushBuilder<VkTextureImageViewBuilder>();
   CreateAndPushBuilder<VkTextureImageSamplerBuilder>();
+
+  CreateAndPushBuilder<VkDescriptorPoolBuilder>();
+  CreateAndPushBuilder<VkDescriptorSetsBuilder>();
 
   CreateAndPushBuilder<VkCommandBuffersBuilder>();
   CreateAndPushBuilder<VkSyncObjectsBuilder>();

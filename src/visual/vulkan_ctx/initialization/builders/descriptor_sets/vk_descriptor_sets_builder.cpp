@@ -1,5 +1,7 @@
 #include "vk_descriptor_sets_builder.h"
 
+#include <array>
+
 #include "../shared/vk_frames_in_flight.h"
 #include "../../../buffers/vk_buffers_manager.h"
 
@@ -18,24 +20,42 @@ void VkDescriptorSetsBuilder::DoBuild() {
 
 
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-    const auto& uniformBufferWrapper =  pCtx->pBuffersManager->GetUniformBufferWrapper(i);
+    const auto& uniformBufferWrapper = pCtx->pBuffersManager->GetUniformBufferWrapper(i);
 
     VkDescriptorBufferInfo bufferInfo{};
     bufferInfo.buffer = uniformBufferWrapper->BufferWrapper->Buffer;
     bufferInfo.offset = 0;
     bufferInfo.range = VK_WHOLE_SIZE;//sizeof(UniformBufferObject);
 
-    VkWriteDescriptorSet descriptorWrite{};
-    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrite.dstSet = pCtx->descriptorSets[i];
-    descriptorWrite.dstBinding = 0;
-    descriptorWrite.dstArrayElement = 0;
+    VkDescriptorImageInfo imageInfo{};
+    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    imageInfo.imageView = pCtx->textureImageView;
+    imageInfo.sampler = pCtx->textureSampler;
 
-    descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    descriptorWrite.descriptorCount = 1;
+    VkWriteDescriptorSet descriptorWriteBuffer{};
+    descriptorWriteBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWriteBuffer.dstSet = pCtx->descriptorSets[i];
+    descriptorWriteBuffer.dstBinding = 0;
+    descriptorWriteBuffer.dstArrayElement = 0;
 
-    descriptorWrite.pBufferInfo = &bufferInfo;
-    vkUpdateDescriptorSets(pCtx->device, 1, &descriptorWrite, 0, nullptr);
+    descriptorWriteBuffer.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    descriptorWriteBuffer.descriptorCount = 1;
+
+    descriptorWriteBuffer.pBufferInfo = &bufferInfo;
+
+    VkWriteDescriptorSet descriptorWriteImage{};
+    descriptorWriteImage.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWriteImage.dstSet = pCtx->descriptorSets[i];
+    descriptorWriteImage.dstBinding = 1;
+    descriptorWriteImage.dstArrayElement = 0;
+
+    descriptorWriteImage.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descriptorWriteImage.descriptorCount = 1;
+
+    descriptorWriteImage.pImageInfo = &imageInfo;
+
+    std::array descriptorWrites = { descriptorWriteBuffer, descriptorWriteImage };
+    vkUpdateDescriptorSets(pCtx->device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
   }
 
 }

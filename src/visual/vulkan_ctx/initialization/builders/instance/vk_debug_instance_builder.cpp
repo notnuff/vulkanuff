@@ -23,6 +23,19 @@ void VkDebugInstanceBuilder::DoBuild() {
   createInfo.enabledLayerCount = validationLayers.size();
   createInfo.ppEnabledLayerNames = validationLayers.data();
 
+
+  // TODO: use best practices
+  // VkValidationFeatureEnableEXT enabledFeatures[] = {
+  //     VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT
+  // };
+  //
+  // VkValidationFeaturesEXT validationFeatures{};
+  // validationFeatures.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+  // validationFeatures.enabledValidationFeatureCount = 1;
+  // validationFeatures.pEnabledValidationFeatures = enabledFeatures;
+  //
+  // createInfo.pNext = &validationFeatures;
+
   if (vkCreateInstance(&createInfo, nullptr, &pCtx->instance) != VK_SUCCESS) {
     throw std::runtime_error("failed to create instance!");
   }
