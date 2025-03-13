@@ -55,8 +55,12 @@ bool VkPhysicalDeviceBuilder::IsPhysicalDeviceSuitable(
                         !swapChainSupport.presentModes.empty();
   }
 
-  return indices.IsComplete() && extensionsSupported && swapChainAdequate;
+  VkPhysicalDeviceFeatures supportedFeatures;
+  vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+
+  return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
 }
+
 bool VkPhysicalDeviceBuilder::CheckDeviceExtensionsSupport(
     VkPhysicalDevice device) {
   // check swap chain support

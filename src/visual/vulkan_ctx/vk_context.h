@@ -104,7 +104,8 @@ public:
 
   VkImage textureImage;
   VkDeviceMemory textureImageMemory;
-
+  VkImageView textureImageView;
+  VkSampler textureSampler;
 
   VkCtxBuildDirector* pCreator = nullptr;
 

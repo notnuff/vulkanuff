@@ -8,7 +8,7 @@
 #include "builders/debug_messenger/vk_debug_messenger_builder.h"
 #include "builders/framebuffers/vk_framebuffers_builder.h"
 #include "builders/graphics_pipeline/vk_graphics_pipeline_builder.h"
-#include "builders/image_views/vk_image_views_builder.h"
+#include "builders/image_views_swapchain/vk_image_views_builder.h"
 #include "builders/instance/vk_debug_instance_builder.h"
 #include "builders/logical_device_builder/vk_logical_device_builder.h"
 #include "builders/physical_device_picker/vk_physical_device_builder.h"
@@ -22,6 +22,8 @@
 #include "builders/descriptor_pool/vk_descriptor_pool_builder.h"
 #include "builders/descriptor_sets/vk_descriptor_sets_builder.h"
 #include "builders/images/vk_texture_image_builder.h"
+#include "builders/images/vk_texture_image_sampler_builder.h"
+#include "builders/images/vk_texture_image_view_builder.h"
 
 VkCtxBuildDirector::VkCtxBuildDirector() {}
 
@@ -47,6 +49,8 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkCommandPoolBuilder>();
 
   CreateAndPushBuilder<VkTextureImageBuilder>();
+  CreateAndPushBuilder<VkTextureImageViewBuilder>();
+  CreateAndPushBuilder<VkTextureImageSamplerBuilder>();
 
   CreateAndPushBuilder<VkCommandBuffersBuilder>();
   CreateAndPushBuilder<VkSyncObjectsBuilder>();

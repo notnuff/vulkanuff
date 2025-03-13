@@ -12,7 +12,7 @@
 #include "initialization/vk_ctx_build_director.h"
 #include "initialization/builders/command_buffers/vk_command_buffers_builder.h"
 #include "initialization/builders/framebuffers/vk_framebuffers_builder.h"
-#include "initialization/builders/image_views/vk_image_views_builder.h"
+#include "initialization/builders/image_views_swapchain/vk_image_views_builder.h"
 #include "initialization/builders/shared/vk_frames_in_flight.h"
 #include "initialization/builders/swap_chain/vk_swap_chain_builder.h"
 #include "buffers/vk_vertex_buffer_factory.h"
