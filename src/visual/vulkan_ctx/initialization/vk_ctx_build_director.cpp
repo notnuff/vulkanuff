@@ -19,6 +19,7 @@
 #include "builders/descriptor_set_layout/vk_descriptor_set_layout_builder.h"
 #include "../buffers/vk_buffers_manager.h"
 #include "builders/buffers_builder/vk_buffers_builder.h"
+#include "builders/depth_buffer/vk_depth_buffer_resources_builder.h"
 #include "builders/descriptor_pool/vk_descriptor_pool_builder.h"
 #include "builders/descriptor_sets/vk_descriptor_sets_builder.h"
 #include "builders/images/vk_texture_image_builder.h"
@@ -49,6 +50,8 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkTextureImageBuilder>();
   CreateAndPushBuilder<VkTextureImageViewBuilder>();
   CreateAndPushBuilder<VkTextureImageSamplerBuilder>();
+
+  CreateAndPushBuilder<VkDepthBufferResourcesBuilder>();
 
   CreateAndPushBuilder<VkDescriptorPoolBuilder>();
   CreateAndPushBuilder<VkDescriptorSetsBuilder>();

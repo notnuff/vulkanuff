@@ -5,3 +5,9 @@ https://docs.vulkan.org/guide/latest/hlsl.html
 https://www.3dgep.com/learning-directx-12-1/
 https://petitl.fr/articles/creating-a-directx12-3d-engine-when-you-know-nothing#plumbing-a-rendering-window
 https://vkguide.dev/https://fgiesen.wordpress.com/2011/07/09/a-trip-through-the-graphics-pipeline-2011-index/
+https://zeux.io/2020/02/27/writing-an-efficient-vulkan-renderer/
+https://github.com/codecrafters-io/build-your-own-x/blob/master/README.md#build-your-own-3d-renderer
+https://github.com/BobLChen/VulkanDemos
+https://github.com/bkerbl/vulkan-compute-exercises
+https://www.youtube.com/playlist?list=PLA0dXqQjCx0RntJy1pqje9uHRF1Z5vZgA
+https://fgiesen.wordpress.com/2011/07/09/a-trip-through-the-graphics-pipeline-2011-index/

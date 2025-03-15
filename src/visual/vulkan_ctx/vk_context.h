@@ -107,10 +107,15 @@ public:
   VkImageView textureImageView;
   VkSampler textureSampler;
 
+  VkImage depthImage;
+  VkDeviceMemory depthImageMemory;
+  VkImageView depthImageView;
+
   VkCtxBuildDirector* pCreator = nullptr;
 
 public:
   std::shared_ptr<VkBuffersManager> pBuffersManager = nullptr;
+
 
 protected:
   UniformBufferObject ubo;

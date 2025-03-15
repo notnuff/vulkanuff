@@ -7,6 +7,7 @@ class VkBufferWrapper;
 
 class VkTextureImageBuilder : public VkCtxBuilderI  {
 public:
+
   void CreateImage(uint32_t width, uint32_t height,
     VkFormat format, VkImageTiling tiling,
     VkImageUsageFlags usage, VkMemoryPropertyFlags memProperties,
