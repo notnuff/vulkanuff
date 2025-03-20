@@ -51,7 +51,7 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkTextureImageViewBuilder>();
   CreateAndPushBuilder<VkTextureImageSamplerBuilder>();
 
-  CreateAndPushBuilder<VkDepthBufferResourcesBuilder>();
+  // CreateAndPushBuilder<VkDepthBufferResourcesBuilder>();
 
   CreateAndPushBuilder<VkDescriptorPoolBuilder>();
   CreateAndPushBuilder<VkDescriptorSetsBuilder>();
