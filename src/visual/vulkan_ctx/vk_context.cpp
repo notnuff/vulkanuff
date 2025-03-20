@@ -132,19 +132,19 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
 
   vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-  auto buffersSize = sizeof(testVertices[0]) * testVertices.size();
+  auto buffersSize = sizeof(yShapeVertices[0]) * yShapeVertices.size();
   auto vertexBufferMemoryWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
 
   VkBuffer vertexBuffers[] = { vertexBufferMemoryWrapper->Buffer };
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-  auto indexBufferSize = sizeof(testIndices[0]) * testIndices.size();
+  auto indexBufferSize = sizeof(yShapeVertices[0]) * yShapeVertices.size();
   auto indexBufferMemoryWrapper = pBuffersManager->GetIndexBufferWrapper(indexBufferSize);
   vkCmdBindIndexBuffer(commandBuffer, indexBufferMemoryWrapper->Buffer, 0, VK_INDEX_TYPE_UINT32);
 
   vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
-  vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(testIndices.size()), 1, 0, 0, 0);
+  vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(yShapeVertices.size()), 1, 0, 0, 0);
   // vkCmdDraw(commandBuffer, static_cast<uint32_t>(testVertices.size()), 1, 0, 0);
   // vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
@@ -155,30 +155,30 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
   }
 }
 
-void VkContext::PerformTransforms() {
-  for(auto& test_vertex : testVertices) {
-    auto deltaAngleRadians = glm::radians(1.0);
-    deltaAngleRadians *= 0.05;
-
-    const auto x = test_vertex.pos.x;
-    const auto y = test_vertex.pos.y;
-    const auto sin = glm::sin(deltaAngleRadians);
-    const auto cos = glm::cos(deltaAngleRadians);
-
-    test_vertex.pos.x = x * cos - y * sin;
-    test_vertex.pos.y = x * sin + y * cos;
-  }
-}
+// void VkContext::PerformTransforms() {
+//   for(auto& test_vertex : testVertices) {
+//     auto deltaAngleRadians = glm::radians(1.0);
+//     deltaAngleRadians *= 0.05;
+//
+//     const auto x = test_vertex.pos.x;
+//     const auto y = test_vertex.pos.y;
+//     const auto sin = glm::sin(deltaAngleRadians);
+//     const auto cos = glm::cos(deltaAngleRadians);
+//
+//     test_vertex.pos.x = x * cos - y * sin;
+//     test_vertex.pos.y = x * sin + y * cos;
+//   }
+// }
 
 void VkContext::PerformVertexBufferCopying() {
   void* data;
-  auto buffersSize = sizeof(testVertices[0]) * testVertices.size();
+  auto buffersSize = sizeof(yShapeVertices[0]) * yShapeVertices.size();
 
   const auto& stagingBufferWrapper = pBuffersManager->GetStagingBufferWrapper(buffersSize);
   const auto& vertexBufferWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
 
   vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
-  memcpy(data, testVertices.data(), (size_t) buffersSize);
+  memcpy(data, yShapeVertices.data(), (size_t) buffersSize);
   vkUnmapMemory(device, stagingBufferWrapper->Memory);
 
   CopyBuffer(stagingBufferWrapper->Buffer, vertexBufferWrapper->Buffer, buffersSize);
@@ -186,14 +186,14 @@ void VkContext::PerformVertexBufferCopying() {
 }
 
 void VkContext::PerformIndexBufferCopying() {
-  auto buffersSize = sizeof(testIndices[0]) * testIndices.size();
+  auto buffersSize = sizeof(yShapeVertices[0]) * yShapeVertices.size();
 
   const auto& stagingBufferWrapper = pBuffersManager->GetStagingBufferWrapper(buffersSize);
   const auto& indexBufferWrapper = pBuffersManager->GetIndexBufferWrapper(buffersSize);
 
   void* data;
   vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
-  memcpy(data, testIndices.data(), (size_t) buffersSize);
+  memcpy(data, yShapeVertices.data(), (size_t) buffersSize);
   vkUnmapMemory(device, stagingBufferWrapper->Memory);
 
   CopyBuffer(stagingBufferWrapper->Buffer, indexBufferWrapper->Buffer, buffersSize);

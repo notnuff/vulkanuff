@@ -51,4 +51,7 @@ struct Vertex {
 extern std::vector<Vertex> testVertices;
 extern std::vector<uint32_t> testIndices;
 
+extern std::vector<Vertex> yShapeVertices;
+extern std::vector<uint32_t> yShapeIndices;
+
 #endif //VERTEX_H

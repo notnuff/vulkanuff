@@ -31,7 +31,7 @@ protected:
     uint32_t imageIndex);
 
 protected:
-  void PerformTransforms();
+  // void PerformTransforms();
   void PerformVertexBufferCopying();
   void PerformIndexBufferCopying();
 
