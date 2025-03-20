@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 
+# TODO: try clang and install packages from github with cmake
+
 # Project setup
 project(vulkanuff LANGUAGES CXX)
 

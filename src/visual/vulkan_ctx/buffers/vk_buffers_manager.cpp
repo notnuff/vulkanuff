@@ -4,6 +4,8 @@
 
 #include "../initialization/builders/shared/vk_frames_in_flight.h"
 
+// TODO: use pools
+
 void VkBuffersManager::Init() {
   stagingBufferFactory.Context(pCtx);
   vertexBufferFactory.Context(pCtx);
