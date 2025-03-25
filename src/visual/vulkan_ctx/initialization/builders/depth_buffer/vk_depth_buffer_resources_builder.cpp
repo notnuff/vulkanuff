@@ -40,7 +40,7 @@ void VkDepthBufferResourcesBuilder::DoBuild() {
     throw std::runtime_error("failed to create texture image view!");
   }
 
-
+  pCtx->PerformImageLayoutTransition(pCtx->depthImage, createInfo.format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 }
 

@@ -11,6 +11,8 @@ protected:
 
   VkFormat GetDepthFormat();
   VkFormat GetAvailableFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+
+public:
   bool IsFormatHasStencil(VkFormat format);
 
 };
