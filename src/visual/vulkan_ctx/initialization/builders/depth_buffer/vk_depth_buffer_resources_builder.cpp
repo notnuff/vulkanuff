@@ -21,7 +21,7 @@ void VkDepthBufferResourcesBuilder::DoBuild() {
   createInfo.image = pCtx->depthImage;
 
   createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-  createInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+  createInfo.format = depthFormat;
 
   createInfo.components = {
     VK_COMPONENT_SWIZZLE_IDENTITY,

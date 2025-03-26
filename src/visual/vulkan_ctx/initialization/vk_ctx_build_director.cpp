@@ -36,22 +36,25 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkLogicalDeviceBuilder>();
   CreateAndPushBuilder<VkSwapChainBuilder>();
   CreateAndPushBuilder<VkImageViewsBuilder>();
-  CreateAndPushBuilder<VkRenderPassBuilder>();
 
   CreateAndPushBuilder<VkBuffersBuilder>();
 
   CreateAndPushBuilder<VkDescriptorSetLayoutBuilder>();
 
+  CreateAndPushBuilder<VkCommandPoolBuilder>();
+
+  CreateAndPushBuilder<VkDepthBufferResourcesBuilder>();
+
+  CreateAndPushBuilder<VkRenderPassBuilder>();
+  CreateAndPushBuilder<VkFramebuffersBuilder>();
+
   CreateAndPushBuilder<VkGraphicsPipelineBuilder>();
 
-  CreateAndPushBuilder<VkFramebuffersBuilder>();
-  CreateAndPushBuilder<VkCommandPoolBuilder>();
 
   CreateAndPushBuilder<VkTextureImageBuilder>();
   CreateAndPushBuilder<VkTextureImageViewBuilder>();
   CreateAndPushBuilder<VkTextureImageSamplerBuilder>();
 
-  CreateAndPushBuilder<VkDepthBufferResourcesBuilder>();
 
   CreateAndPushBuilder<VkDescriptorPoolBuilder>();
   CreateAndPushBuilder<VkDescriptorSetsBuilder>();
@@ -67,8 +70,12 @@ VkContext* VkCtxBuildDirector::CreateContext() {
   context->SetWindowAndResizeCallback(pTargetWindow);
   context->pCreator = this;
 
+  // first will set context for builders, as builder before can use something from builder after
   for(const auto& builder : buildersContainer) {
     builder->Context(context);
+  }
+
+  for(const auto& builder : buildersContainer) {
     builder->Build();
   }
 

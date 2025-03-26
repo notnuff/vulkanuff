@@ -111,6 +111,19 @@ void VkGraphicsPipelineBuilder::DoBuild() {
   multisampling.alphaToOneEnable = VK_FALSE; // Optional
 
   VkPipelineDepthStencilStateCreateInfo depthStencil{};
+  depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+  depthStencil.depthTestEnable = VK_TRUE;
+  depthStencil.depthWriteEnable = VK_TRUE;
+
+  depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+
+  depthStencil.depthBoundsTestEnable = VK_FALSE;
+  depthStencil.minDepthBounds = 0.0f;
+  depthStencil.maxDepthBounds = 1.0f;
+
+  depthStencil.stencilTestEnable = VK_FALSE;
+  depthStencil.front = {}; // Optional
+  depthStencil.back = {}; // Optional
 
   // alpha blend of two colors after fragment shader
   VkPipelineColorBlendAttachmentState colorBlendAttachment{};
@@ -159,7 +172,9 @@ void VkGraphicsPipelineBuilder::DoBuild() {
   pipelineInfo.pViewportState = &viewportState;
   pipelineInfo.pRasterizationState = &rasterizer;
   pipelineInfo.pMultisampleState = &multisampling;
-  pipelineInfo.pDepthStencilState = nullptr; // Optional
+
+  pipelineInfo.pDepthStencilState = &depthStencil;
+
   pipelineInfo.pColorBlendState = &colorBlending;
   pipelineInfo.pDynamicState = &dynamicState;
 
@@ -170,6 +185,7 @@ void VkGraphicsPipelineBuilder::DoBuild() {
 
   pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
   pipelineInfo.basePipelineIndex = -1; // Optional
+
 
   if (vkCreateGraphicsPipelines(pCtx->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pCtx->graphicsPipeline) != VK_SUCCESS) {
     throw std::runtime_error("failed to create graphics pipeline!");

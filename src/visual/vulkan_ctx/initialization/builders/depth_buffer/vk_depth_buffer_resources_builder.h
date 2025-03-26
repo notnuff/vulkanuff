@@ -9,10 +9,10 @@ protected:
   virtual void DoDestroy() override;
 
 
-  VkFormat GetDepthFormat();
   VkFormat GetAvailableFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
 public:
+  VkFormat GetDepthFormat();
   bool IsFormatHasStencil(VkFormat format);
 
 };
