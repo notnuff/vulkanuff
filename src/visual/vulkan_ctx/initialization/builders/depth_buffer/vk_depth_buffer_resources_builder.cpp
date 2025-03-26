@@ -44,7 +44,11 @@ void VkDepthBufferResourcesBuilder::DoBuild() {
 
 }
 
-void VkDepthBufferResourcesBuilder::DoDestroy() {}
+void VkDepthBufferResourcesBuilder::DoDestroy() {
+  vkDestroyImageView(pCtx->device, pCtx->depthImageView, nullptr);
+  vkDestroyImage(pCtx->device, pCtx->depthImage, nullptr);
+  vkFreeMemory(pCtx->device, pCtx->depthImageMemory, nullptr);
+}
 
 VkFormat VkDepthBufferResourcesBuilder::GetDepthFormat() {
   return GetAvailableFormat(

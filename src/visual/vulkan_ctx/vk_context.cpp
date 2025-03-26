@@ -84,10 +84,14 @@ void VkContext::RecreateSwapChain() {
   }
 
   pCreator->GetBuilderByType<VkSwapChainBuilder>()->Destroy();
+  pCreator->GetBuilderByType<VkDepthBufferResourcesBuilder>()->Destroy();
 
   pCreator->GetBuilderByType<VkSwapChainBuilder>()->Build();
   pCreator->GetBuilderByType<VkImageViewsBuilder>()->Build();
+  pCreator->GetBuilderByType<VkDepthBufferResourcesBuilder>()->Build();
+
   pCreator->GetBuilderByType<VkFramebuffersBuilder>()->Build();
+
 }
 
 void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
