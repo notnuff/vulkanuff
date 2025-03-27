@@ -25,6 +25,7 @@
 #include "builders/images/vk_texture_image_builder.h"
 #include "builders/images/vk_texture_image_sampler_builder.h"
 #include "builders/images/vk_texture_image_view_builder.h"
+#include "builders/model/vk_model_creation.h"
 
 VkCtxBuildDirector::VkCtxBuildDirector() {}
 
@@ -37,6 +38,7 @@ void VkCtxBuildDirector::InitBuilders() {
   CreateAndPushBuilder<VkSwapChainBuilder>();
   CreateAndPushBuilder<VkImageViewsBuilder>();
 
+  CreateAndPushBuilder<VkModelCreation>();
   CreateAndPushBuilder<VkBuffersBuilder>();
 
   CreateAndPushBuilder<VkDescriptorSetLayoutBuilder>();

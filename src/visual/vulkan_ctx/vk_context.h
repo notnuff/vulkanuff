@@ -11,6 +11,7 @@
 #include <optional>
 #include <vector>
 
+#include "common/vertex.h"
 #include "objects/vk_uniform_buffer_object.h"
 
 
@@ -101,6 +102,8 @@ public:
   uint32_t currentFrame = 0;
   bool framebufferResized = false;
 
+  std::vector<Vertex> modelVertices;
+  std::vector<uint32_t> modelIndices;
 
   VkImage textureImage;
   VkDeviceMemory textureImageMemory;

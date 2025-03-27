@@ -46,9 +46,13 @@ struct Vertex {
     return attributeDescriptions;
   }
 
+  bool operator==(const Vertex& other) const {
+    return pos == other.pos && color == other.color && texCoord == other.texCoord;
+  }
+
 };
 
-extern std::vector<Vertex> testVertices;
-extern std::vector<uint32_t> testIndices;
+// extern std::vector<Vertex> modelVertices;
+// extern std::vector<uint32_t> modelIndices;
 
 #endif //VERTEX_H

@@ -47,7 +47,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src/visual/vulkan_ctx")
 
 include_directories(${CMAKE_SOURCE_DIR}/third/stb)
-link_directories(${CMAKE_SOURCE_DIR}/third/stb)
+include_directories(${CMAKE_SOURCE_DIR}/third/tinyobjloader)
+#link_directories(${CMAKE_SOURCE_DIR}/third/stb)
 
 
 # Link libraries

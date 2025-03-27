@@ -141,20 +141,20 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
 
   vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-  auto buffersSize = sizeof(testVertices[0]) * testVertices.size();
+  auto buffersSize = sizeof(modelVertices[0]) * modelVertices.size();
   auto vertexBufferMemoryWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
 
   VkBuffer vertexBuffers[] = { vertexBufferMemoryWrapper->Buffer };
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-  auto indexBufferSize = sizeof(testIndices[0]) * testIndices.size();
+  auto indexBufferSize = sizeof(modelIndices[0]) * modelIndices.size();
   auto indexBufferMemoryWrapper = pBuffersManager->GetIndexBufferWrapper(indexBufferSize);
   vkCmdBindIndexBuffer(commandBuffer, indexBufferMemoryWrapper->Buffer, 0, VK_INDEX_TYPE_UINT32);
 
   vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
-  vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(testIndices.size()), 1, 0, 0, 0);
-  // vkCmdDraw(commandBuffer, static_cast<uint32_t>(testVertices.size()), 1, 0, 0);
+  vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(modelIndices.size()), 1, 0, 0, 0);
+  // vkCmdDraw(commandBuffer, static_cast<uint32_t>(modelVertices.size()), 1, 0, 0);
   // vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
   vkCmdEndRenderPass(commandBuffer);
@@ -165,7 +165,7 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
 }
 
 void VkContext::PerformTransforms() {
-  for(auto& test_vertex : testVertices) {
+  for(auto& test_vertex : modelVertices) {
     auto deltaAngleRadians = glm::radians(1.0);
     deltaAngleRadians *= 0.05;
 
@@ -181,13 +181,13 @@ void VkContext::PerformTransforms() {
 
 void VkContext::PerformVertexBufferCopying() {
   void* data;
-  auto buffersSize = sizeof(testVertices[0]) * testVertices.size();
+  auto buffersSize = sizeof(modelVertices[0]) * modelVertices.size();
 
   const auto& stagingBufferWrapper = pBuffersManager->GetStagingBufferWrapper(buffersSize);
   const auto& vertexBufferWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
 
   vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
-  memcpy(data, testVertices.data(), (size_t) buffersSize);
+  memcpy(data, modelVertices.data(), (size_t) buffersSize);
   vkUnmapMemory(device, stagingBufferWrapper->Memory);
 
   CopyBuffer(stagingBufferWrapper->Buffer, vertexBufferWrapper->Buffer, buffersSize);
@@ -195,14 +195,14 @@ void VkContext::PerformVertexBufferCopying() {
 }
 
 void VkContext::PerformIndexBufferCopying() {
-  auto buffersSize = sizeof(testIndices[0]) * testIndices.size();
+  auto buffersSize = sizeof(modelIndices[0]) * modelIndices.size();
 
   const auto& stagingBufferWrapper = pBuffersManager->GetStagingBufferWrapper(buffersSize);
   const auto& indexBufferWrapper = pBuffersManager->GetIndexBufferWrapper(buffersSize);
 
   void* data;
   vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
-  memcpy(data, testIndices.data(), (size_t) buffersSize);
+  memcpy(data, modelIndices.data(), (size_t) buffersSize);
   vkUnmapMemory(device, stagingBufferWrapper->Memory);
 
   CopyBuffer(stagingBufferWrapper->Buffer, indexBufferWrapper->Buffer, buffersSize);
@@ -214,8 +214,10 @@ void VkContext::UpdateUniformBuffer() {
   auto currentTime = std::chrono::high_resolution_clock::now();
   auto deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-  ubo.model = glm::rotate(glm::mat4(1.0f), deltaTime * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  ubo.model = glm::rotate(glm::mat4(1.0f), deltaTime / 100.f * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  auto pos = glm::vec3(2.0f, 2.0f, 2.0f);
+  // pos *= 1.0 + deltaTime ;
+  ubo.view = glm::lookAt(pos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f, 10.0f);
   ubo.proj[1][1] *= -1;
 }

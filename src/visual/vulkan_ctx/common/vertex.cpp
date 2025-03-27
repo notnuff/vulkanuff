@@ -1,6 +1,6 @@
 #include "vertex.h"
 
-std::vector<Vertex> testVertices = {
+std::vector<Vertex> modelVertices = {
   {{-0.5f, -0.5f, 0.0},  {1.0f, 0.0f, 0.0f}, {1.0, 0.0}},
   {{0.5f, -0.5f, 0.0},   {0.0f, 1.0f, 0.0f}, {0.0, 0.0}},
   {{0.5f, 0.5f, 0.0},    {0.0f, 0.0f, 1.0f}, {0.0, 1.0}},
@@ -12,7 +12,7 @@ std::vector<Vertex> testVertices = {
   {{-0.5f, 0.5f, -0.5},   {1.0f, 1.0f, 1.0f}, {1.0, 1.0}}
 };
 
-std::vector<uint32_t> testIndices = {
+std::vector<uint32_t> modelIndices = {
   0, 1, 2, 2, 3, 0,
   4, 5, 6, 6, 7, 4,
 };
