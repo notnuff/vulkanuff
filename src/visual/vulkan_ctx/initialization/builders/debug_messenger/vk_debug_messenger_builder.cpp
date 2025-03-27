@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#include "../../../vk_context.h"
+#include "vk_context.h"
 
 void VkDebugMessengerBuilder::DoBuild() {
   VkDebugUtilsMessengerCreateInfoEXT createInfo{};

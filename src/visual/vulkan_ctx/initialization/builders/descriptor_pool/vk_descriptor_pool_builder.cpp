@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "../shared/vk_frames_in_flight.h"
+#include "initialization/builders/shared/vk_frames_in_flight.h"
 
 
 void VkDescriptorPoolBuilder::DoBuild() {

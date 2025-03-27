@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-#include "../../../vk_context.h"
+#include "vk_context.h"
 
 void VkImageViewsBuilder::DoBuild() {
   pCtx->swapChainImageViews.resize(

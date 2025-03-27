@@ -5,10 +5,10 @@
 #include <array>
 #include <stdexcept>
 
-#include "../../vk_ctx_build_director.h"
-#include "../../builders/depth_buffer/vk_depth_buffer_resources_builder.h"
+#include "initialization/vk_ctx_build_director.h"
+#include "initialization/builders/depth_buffer/vk_depth_buffer_resources_builder.h"
 
-#include "../../../vk_context.h"
+#include "vk_context.h"
 
 void VkRenderPassBuilder::DoBuild() {
   VkAttachmentDescription colorAttachment{};

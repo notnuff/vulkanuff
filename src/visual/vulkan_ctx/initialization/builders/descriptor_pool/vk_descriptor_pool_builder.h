@@ -2,7 +2,7 @@
 #define VK_DESCRIPTOR_POOL_BUILDER_H
 
 
-#include "../vk_ctx_builder_i.h"
+#include "initialization/builders/vk_ctx_builder_i.h"
 
 class VkDescriptorPoolBuilder : public VkCtxBuilderI {
 protected:

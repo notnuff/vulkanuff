@@ -1,7 +1,7 @@
 #include "vk_queue_family_indices.h"
 
 #include <vector>
-#include "../vk_context.h"
+#include "vk_context.h"
 
 bool QueueFamilyIndices::IsComplete() {
   return graphicsFamily.has_value() && presentFamily.has_value();

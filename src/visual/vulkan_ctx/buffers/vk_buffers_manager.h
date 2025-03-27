@@ -5,7 +5,7 @@
 
 #include "vk_staging_buffer_factory.h"
 #include "vk_vertex_buffer_factory.h"
-#include "../vk_context_user.h"
+#include "vk_context_user.h"
 #include "vk_buffer_wrapper.h"
 #include "vk_mapped_buffer_wrapper.h"
 #include "vk_index_buffer_factory.h"

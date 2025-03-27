@@ -1,8 +1,8 @@
 #ifndef VK_CTX_BUILDER_I_H
 #define VK_CTX_BUILDER_I_H
 
-#include "../../vk_context.h"
-#include "../../vk_context_user.h"
+#include "vk_context.h"
+#include "vk_context_user.h"
 
 class VkContext;
 class VkCtxBuilderI : public VkContextUser {

@@ -2,10 +2,10 @@
 
 #include <stdexcept>
 
-#include "../../../vk_context.h"
-#include "../shared/vk_frames_in_flight.h"
-#include "../../../common/vk_queue_family_indices.h"
-#include "../../../common/vk_swap_chain_support_details.h"
+#include "vk_context.h"
+#include "initialization/builders/shared/vk_frames_in_flight.h"
+#include "common/vk_queue_family_indices.h"
+#include "common/vk_swap_chain_support_details.h"
 
 
 

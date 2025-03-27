@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "../vk_context.h"
+#include "vk_context.h"
 
 struct SwapChainSupportDetails {
  public:

@@ -2,8 +2,8 @@
 
 #include <array>
 
-#include "../shared/vk_frames_in_flight.h"
-#include "../../../buffers/vk_buffers_manager.h"
+#include "initialization/builders/shared/vk_frames_in_flight.h"
+#include "buffers/vk_buffers_manager.h"
 
 void VkDescriptorSetsBuilder::DoBuild() {
   std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, pCtx->descriptorSetLayout);

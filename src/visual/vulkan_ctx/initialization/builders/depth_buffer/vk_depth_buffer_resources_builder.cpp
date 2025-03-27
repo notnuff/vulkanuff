@@ -1,7 +1,7 @@
 #include "vk_depth_buffer_resources_builder.h"
 
-#include "../../vk_ctx_build_director.h"
-#include "../images/vk_texture_image_builder.h"
+#include "initialization/vk_ctx_build_director.h"
+#include "initialization/builders/images/vk_texture_image_builder.h"
 
 
 void VkDepthBufferResourcesBuilder::DoBuild() {

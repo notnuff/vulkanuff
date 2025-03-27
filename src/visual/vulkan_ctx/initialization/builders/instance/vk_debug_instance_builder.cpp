@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../../../vk_context.h"
+#include "vk_context.h"
 
 const std::vector validationLayers = {
     "VK_LAYER_KHRONOS_validation",

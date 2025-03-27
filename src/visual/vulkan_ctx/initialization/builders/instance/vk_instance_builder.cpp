@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../../../vk_context.h"
+#include "vk_context.h"
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;

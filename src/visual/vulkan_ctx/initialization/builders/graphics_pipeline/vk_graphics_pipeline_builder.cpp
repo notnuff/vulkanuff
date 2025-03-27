@@ -1,9 +1,9 @@
 #include "vk_graphics_pipeline_builder.h"
 #include <vulkan/vulkan_core.h>
 
-#include "../../../vk_context.h"
-#include "../../../common/vertex.h"
-#include "../../../../../utils/helpers.h"
+#include "vk_context.h"
+#include "common/vertex.h"
+#include "utils/helpers.h"
 
 void VkGraphicsPipelineBuilder::DoBuild() {
   auto vertShaderCode = readFile("../shaders/vert.spv");

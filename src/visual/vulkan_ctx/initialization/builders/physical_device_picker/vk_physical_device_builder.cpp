@@ -6,10 +6,10 @@
 #include <set>
 #include <stdexcept>
 
-#include "../../../common/vk_queue_family_indices.h"
-#include "../../../common/vk_swap_chain_support_details.h"
-#include "../../../vk_context.h"
-#include "../shared/vk_physical_device_defines.h"
+#include "common/vk_queue_family_indices.h"
+#include "common/vk_swap_chain_support_details.h"
+#include "vk_context.h"
+#include "initialization/builders/shared/vk_physical_device_defines.h"
 
 void VkPhysicalDeviceBuilder::DoBuild() {
   PickPhysicalDevice();

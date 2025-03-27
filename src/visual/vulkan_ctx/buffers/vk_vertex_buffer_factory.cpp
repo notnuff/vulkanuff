@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../common/vertex.h"
+#include "common/vertex.h"
 
 
 std::shared_ptr<VkBufferWrapper> VkVertexBufferFactory::CreateBuffer(

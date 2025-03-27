@@ -3,8 +3,8 @@
 #include <vulkan/vulkan_core.h>
 
 #include <stdexcept>
-#include "../../../common/vk_queue_family_indices.h"
-#include "../../../common/vk_swap_chain_support_details.h"
+#include "common/vk_queue_family_indices.h"
+#include "common/vk_swap_chain_support_details.h"
 
 void VkCommandPoolBuilder::DoBuild() {
   QueueFamilyIndices queueFamilyIndices = QueueFamilyIndices::GetQueueFamilies(pCtx->physicalDevice, pCtx);

@@ -2,7 +2,7 @@
 #define VK_DESCRIPTOR_SET_LAYOUT_BUILDER_H
 
 
-#include "../vk_ctx_builder_i.h"
+#include "initialization/builders/vk_ctx_builder_i.h"
 
 class VkDescriptorSetLayoutBuilder : public VkCtxBuilderI {
 protected:

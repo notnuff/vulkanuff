@@ -1,5 +1,5 @@
 #include "vk_buffer_creation_helper.h"
-#include "../vk_context.h"
+#include "vk_context.h"
 #include <stdexcept>
 
 void VkBufferFactoryI::DestroyBuffer(const VkBufferWrapper& bufferWrapper) {

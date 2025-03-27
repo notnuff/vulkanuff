@@ -4,7 +4,7 @@
 #include "vk_buffer_creation_helper.h"
 #include "vk_buffer_wrapper.h"
 
-#include "../initialization/builders/vk_ctx_builder_i.h"
+#include "initialization/builders/vk_ctx_builder_i.h"
 
 
 class VkVertexBufferFactory : public VkBufferFactoryI {

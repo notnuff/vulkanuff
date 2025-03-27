@@ -2,7 +2,7 @@
 
 #include <oneapi/tbb/detail/_task.h>
 
-#include "../../../buffers/vk_buffers_manager.h"
+#include "buffers/vk_buffers_manager.h"
 
 void VkBuffersBuilder::DoBuild() {
   auto buffersManager = std::make_shared<VkBuffersManager>();

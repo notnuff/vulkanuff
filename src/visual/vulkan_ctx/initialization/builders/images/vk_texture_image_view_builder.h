@@ -1,7 +1,7 @@
 #ifndef VK_TEXTURE_IMAGE_VIEW_H
 #define VK_TEXTURE_IMAGE_VIEW_H
 
-#include "../vk_ctx_builder_i.h"
+#include "initialization/builders/vk_ctx_builder_i.h"
 
 class VkTextureImageViewBuilder : public VkCtxBuilderI {
 protected:

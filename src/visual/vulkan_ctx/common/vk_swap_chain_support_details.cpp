@@ -1,6 +1,6 @@
 #include "vk_swap_chain_support_details.h"
 
-#include "../vk_context.h"
+#include "vk_context.h"
 
 SwapChainSupportDetails SwapChainSupportDetails::
     GetQuerySwapChainSupport(

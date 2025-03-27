@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
-#include "../../../vk_context.h"
+#include "vk_context.h"
 
 void VkSurfaceBuilder::DoBuild() {
   if (glfwCreateWindowSurface(pCtx->instance, pCtx->window, nullptr, &pCtx->surface) != VK_SUCCESS) {

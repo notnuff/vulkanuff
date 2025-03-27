@@ -3,8 +3,8 @@
 
 #include <vulkan/vulkan_core.h>
 
-#include "../vk_ctx_builder_i.h"
-#include "../../../vk_context.h"
+#include "initialization/builders/vk_ctx_builder_i.h"
+#include "vk_context.h"
 
 class VkPhysicalDeviceBuilder : public VkCtxBuilderI {
 protected:

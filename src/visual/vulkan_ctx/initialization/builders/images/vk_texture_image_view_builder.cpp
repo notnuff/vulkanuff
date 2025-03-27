@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-#include "../../../vk_context.h"
+#include "vk_context.h"
 
 
 void VkTextureImageViewBuilder::DoBuild() {

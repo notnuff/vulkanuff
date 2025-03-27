@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "../vk_context_user.h"
+#include "vk_context_user.h"
 #include "vk_buffer_wrapper.h"
 
 class VkBufferFactoryI : public VkContextUser {

@@ -1,8 +1,8 @@
-#include "vk_ctx_build_director.h"
+#include "initialization/vk_ctx_build_director.h"
 
 #include <algorithm>
 
-#include "../vk_context.h"
+#include "vk_context.h"
 #include "builders/command_buffers/vk_command_buffers_builder.h"
 #include "builders/command_pool/vk_command_pool_builder.h"
 #include "builders/debug_messenger/vk_debug_messenger_builder.h"
@@ -17,7 +17,7 @@
 #include "builders/swap_chain/vk_swap_chain_builder.h"
 #include "builders/sync_objects/vk_sync_objects_builder.h"
 #include "builders/descriptor_set_layout/vk_descriptor_set_layout_builder.h"
-#include "../buffers/vk_buffers_manager.h"
+#include "buffers/vk_buffers_manager.h"
 #include "builders/buffers_builder/vk_buffers_builder.h"
 #include "builders/depth_buffer/vk_depth_buffer_resources_builder.h"
 #include "builders/descriptor_pool/vk_descriptor_pool_builder.h"

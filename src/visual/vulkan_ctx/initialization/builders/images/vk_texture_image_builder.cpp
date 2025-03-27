@@ -3,7 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "../../../buffers/vk_buffers_manager.h"
+#include "buffers/vk_buffers_manager.h"
 
 void VkTextureImageBuilder::CreateImage(uint32_t width, uint32_t height,
     VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,

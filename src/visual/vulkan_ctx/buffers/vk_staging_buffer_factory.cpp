@@ -1,6 +1,6 @@
 #include "vk_staging_buffer_factory.h"
 
-#include "../common/vertex.h"
+#include "common/vertex.h"
 
 
 std::shared_ptr<VkBufferWrapper> VkStagingBufferFactory::CreateBuffer(

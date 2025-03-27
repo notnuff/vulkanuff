@@ -4,8 +4,8 @@
 
 #include <stdexcept>
 
-#include "../shared/vk_frames_in_flight.h"
-#include "../../../common/vk_swap_chain_support_details.h"
+#include "initialization/builders/shared/vk_frames_in_flight.h"
+#include "common/vk_swap_chain_support_details.h"
 
 void VkSyncObjectsBuilder::DoBuild() {
   pCtx->imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
