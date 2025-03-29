@@ -32,3 +32,6 @@
    `presentationQueue`. This queue, as graphicsQueue, will be created during 
    the logical device creation, so it also must be written to 
    `VkDeviceQueueCreateInfo`
+
+5. Bonus:
+   https://docs.vulkan.org/spec/latest/chapters/VK_KHR_surface/wsi.html#_wsi_surface

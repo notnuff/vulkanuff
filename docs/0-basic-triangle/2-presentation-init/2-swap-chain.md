@@ -104,5 +104,7 @@
    swap chain, to which we will render everything. We can get these handles
    with `vkGetSwapchainImagesKHR`.
       
+8. Bonus:
+   https://docs.vulkan.org/spec/latest/chapters/VK_KHR_surface/wsi.html#wsi-swapchain
    
 
