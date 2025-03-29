@@ -35,4 +35,6 @@
    we still need to get handles from LD to access them. We can do it with  
    `vkGetDeviceQueue`, which will write handle of specific queue family 
    index to `VkQueue` (and don't forget that we can allocate several queues, 
-   so we will need then to specify which one of them we want to use) 
+   so we will need then to specify which one of them we want to use). In 
+   this case, VkQueue will be our `graphicsQueue`, to which we will submit 
+   all the rendering commands. There also will be another queues. 
