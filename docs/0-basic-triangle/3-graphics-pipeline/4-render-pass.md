@@ -77,10 +77,32 @@
       for
       which the data must be preserved
 
-4. Dependencies: //TODO
+4. Dependencies:  
+   When we want to render something to the image, we actually want also to
+   transition that image to be ready for rendering. And all such
+   transitions in a single pass are done implicitly by the render pass. But,
+   we still need to specify such transitions - and that is done with subpass
+   dependencies. [Here](https://stackoverflow.com/questions/65050086/vulkan-spec-clarification-regarding-subpass-dependency)
+
+   is good take on what we needed subpass dependencies for when we have two 
+   subpasses that use same attachments - basically its just for 
+   synchronization of access to attachments. Now, there are actually two 
+   implicit subpasses **before** and **after** each render pass - so-called 
+   VK_SUBPASS_EXTERNAL. And, of course, we need to configure that 
+   transitions too.
+   Now, we need to ensure that render pass won't begin until
+   the image is ready - and for that we will make the render pass wait for the
+   `VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT` stage. In
+   `VkSubpassDependency` we configure everything about the dependencies:
+   - we specify from which subpass to which one we will transition in 
+     `srcSubpass` and `dstSubpass`
+   - operations to wait on and the stages in which these operations occur in 
+    `srcStageMask` and `srcAccessMask`
+   - operations that should wait on this are in `dstStageMask` and 
+     `dstAccessMask`
 
 5. Render pass:  
-   When everything is prepared, it's time to create `VkRenderPass`. It's 
-   relatively simple - in `VkRenderPassCreateInfo`, just set the 
-   `VkAttachmentReference`'s and `VkSubpassDescription`'s, and you are ready 
+   When everything is prepared, it's time to create `VkRenderPass`. It's
+   relatively simple - in `VkRenderPassCreateInfo`, just set the
+   `VkAttachmentReference`'s and `VkSubpassDescription`'s, and you are ready
    to go further.
