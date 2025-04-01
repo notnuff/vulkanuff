@@ -8,7 +8,7 @@
    VK_BUFFER_USAGE_VERTEX_BUFFER_BIT or VK_BUFFER_USAGE_INDEX_BUFFER_BIT (or
    both of them, buffers can and will be used with several bits specified),
    and **sharing mode** - either buffer will be accessed from only one
-   different _queue families_ on the same time. As result we get `VkBuffer` 
+   different _queue families_ on the same time. As result we get `VkBuffer`
    handle.
 
 3. Memory requirements for the Buffer:  
@@ -33,9 +33,21 @@
 4. Memory allocation for the Buffer:  
    With the right memory type selected, we can actually allocate this memory.
    As usual, `VkMemoryAllocateInfo` needed for that. In this struct we
-   specify **size** of allocating memory and **memoryTypeIndex** - the first 
-   one is clear, and the second one we get from 3rd step - the best memory, 
-   that fits our needs. When memory actually allocated in `VkDeviceMemory` 
-   struct, we bind it to the buffer with `vkBindBufferMemory`. 
+   specify **size** of allocating memory and **memoryTypeIndex** - the first
+   one is clear, and the second one we get from 3rd step - the best memory,
+   that fits our needs. When memory actually allocated in `VkDeviceMemory`
+   struct, we bind it to the buffer with `vkBindBufferMemory`.
 
-5. 
+5. Filling the Buffer with useful data:
+   We can copy something to the buffer memory from the host quite simple
+   actually: if memory is suitable for accessing from the CPU (aka it has
+   bits from 3rd step), we can map the memory to some pointer and copied to
+   this pointer, just like with OS memory mapping, which I find very cool.
+   In Vulkan, this is done with **vkMapMemory**, then we **memcpy** the data
+   we want to the mapped memory, and then we **vkUnmapMemory** used memory.
+
+6. Binding the Buffer:  
+   So, what we have - buffer is created, memory is binded to buffer and 
+   contains vertices data - all we need now is actually use this buffer in 
+   the render pipeline. It is done with `vkCmdBindVertexBuffers` - this one 
+   quite obvious, so I won't describe it here.
