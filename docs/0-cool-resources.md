@@ -11,3 +11,4 @@ https://github.com/BobLChen/VulkanDemos
 https://github.com/bkerbl/vulkan-compute-exercises
 https://www.youtube.com/playlist?list=PLA0dXqQjCx0RntJy1pqje9uHRF1Z5vZgA
 https://fgiesen.wordpress.com/2011/07/09/a-trip-through-the-graphics-pipeline-2011-index/
+https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook
