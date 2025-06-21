@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "common/vertex.h"
+#include "lighting/vk_lighting_ubo.h"
 #include "objects/vk_uniform_buffer_object.h"
 
 
@@ -21,6 +22,7 @@ class VkCtxBuildDirector;
 class VkContext {
 public:
   void DrawFrame();
+  void InitBeforeMainLoop();
   void SetWindowAndResizeCallback(GLFWwindow* inWindow);
 
 public:
@@ -38,6 +40,9 @@ protected:
 
   void UpdateUniformBuffer();
   void PerformUniformBufferCopying();
+
+  void UpdateLighting();
+  void PerformLightingBufferCopying();
 
   VkResult PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands, uint32_t imageIndex);
 
@@ -122,6 +127,7 @@ public:
 
 protected:
   UniformBufferObject ubo;
+  LightingBufferObject lightingBO;
 
 
 protected:

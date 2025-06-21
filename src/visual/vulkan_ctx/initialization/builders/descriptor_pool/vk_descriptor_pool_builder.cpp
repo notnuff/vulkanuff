@@ -14,7 +14,11 @@ void VkDescriptorPoolBuilder::DoBuild() {
   poolSizeSampler.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
   poolSizeSampler.descriptorCount = MAX_FRAMES_IN_FLIGHT;
 
-  std::array poolSizes = { poolSizeUniform, poolSizeSampler };
+  VkDescriptorPoolSize poolSizeLighting{};
+  poolSizeLighting.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  poolSizeLighting.descriptorCount = MAX_FRAMES_IN_FLIGHT;
+
+  std::array poolSizes = { poolSizeUniform, poolSizeSampler, poolSizeLighting };
 
   VkDescriptorPoolCreateInfo poolInfo{};
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

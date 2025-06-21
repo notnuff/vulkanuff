@@ -32,6 +32,7 @@ void VisualApp::InitVulkan() {
   vkCtxBuildDirector->InitBuilders();
 
   vkCtx = vkCtxBuildDirector->CreateContext();
+  vkCtx->InitBeforeMainLoop();
 }
 
 void VisualApp::DestroyVulkan() {

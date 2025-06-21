@@ -6,6 +6,9 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <cmath>
 
 #include <chrono>
 
@@ -37,6 +40,9 @@ void VkContext::DrawFrame() {
   UpdateUniformBuffer();
   PerformUniformBufferCopying();
 
+  UpdateLighting();
+  PerformLightingBufferCopying();
+
   vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
   uint32_t imageIndex;
@@ -63,6 +69,9 @@ void VkContext::DrawFrame() {
   }
 
   currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+}
+
+void VkContext::InitBeforeMainLoop() {
 }
 
 void VkContext::SetWindowAndResizeCallback(GLFWwindow* inWindow) {
@@ -224,6 +233,28 @@ void VkContext::UpdateUniformBuffer() {
 
 void VkContext::PerformUniformBufferCopying() {
   memcpy(pBuffersManager->GetUniformBufferWrapper(currentFrame)->MappedMemory, &ubo, sizeof(ubo));
+}
+
+void VkContext::UpdateLighting() {
+  static auto startTime = std::chrono::high_resolution_clock::now();
+
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  auto deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+  auto speed = 0.05f;
+  float azimuth   = glm::mod(deltaTime * speed, glm::two_pi<float>());
+  float elevation = glm::radians(45.0f);
+
+  float x = cos(elevation) * cos(azimuth);
+  float y = cos(elevation) * sin(azimuth);
+  float z = -sin(elevation);
+
+  lightingBO.lightingDirection = glm::normalize(glm::vec3(x, y, z));
+}
+
+void VkContext::PerformLightingBufferCopying() {
+  memcpy(pBuffersManager->GetLightingBufferWrapper(currentFrame)->MappedMemory, &lightingBO, sizeof(lightingBO));
+
 }
 
 VkResult VkContext::PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands, uint32_t imageIndex) {

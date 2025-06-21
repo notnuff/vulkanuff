@@ -17,7 +17,15 @@ void VkDescriptorSetLayoutBuilder::DoBuild() {
   samplerLayoutBinding.pImmutableSamplers = nullptr;
   samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-  std::array bindings = { uboLayoutBinding, samplerLayoutBinding };
+  VkDescriptorSetLayoutBinding lightingLayoutBinding{};
+  lightingLayoutBinding.binding = 2;
+  lightingLayoutBinding.descriptorCount = 1;
+  lightingLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  lightingLayoutBinding.pImmutableSamplers = nullptr;
+  lightingLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+
+  std::array bindings = { uboLayoutBinding, samplerLayoutBinding, lightingLayoutBinding };
 
   VkDescriptorSetLayoutCreateInfo layoutInfo{};
   layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;

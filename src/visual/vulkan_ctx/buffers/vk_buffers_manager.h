@@ -25,17 +25,22 @@ public:
 
   std::shared_ptr<VkBufferWrapper> GetIndexBufferWrapper(VkDeviceSize size);
   std::shared_ptr<VkMappedBufferWrapper> GetUniformBufferWrapper(int frame);
+  std::shared_ptr<VkMappedBufferWrapper> GetLightingBufferWrapper(int frame);
 
 
 protected:
   void CreateUniformBuffers(int frames);
   void DestroyUniformBuffers();
 
+  void CreateLightingBuffers(int frames);
+  void DestroyLightingBuffers();
+
 protected:
   std::shared_ptr<VkBufferWrapper> vertexBufferCache;
 
   using TUniformBufferCache = std::vector<std::shared_ptr<VkMappedBufferWrapper>>;
   TUniformBufferCache uniformBufferCache;
+  TUniformBufferCache lightingBufferCache;
 
   using TBufferCache = std::map<VkDeviceSize, std::shared_ptr<VkBufferWrapper>>;
   TBufferCache stagingBufferCache;
