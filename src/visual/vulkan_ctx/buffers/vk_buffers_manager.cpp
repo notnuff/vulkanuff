@@ -23,6 +23,7 @@ void VkBuffersManager::Destroy() {
   indexBufferFactory.DestroyBuffer(*indexBufferCache);
 
   DestroyUniformBuffers();
+  DestroyLightingBuffers();
 }
 
 void VkBuffersManager::CreateUniformBuffers(int frames) {
