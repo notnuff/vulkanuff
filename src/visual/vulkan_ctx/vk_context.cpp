@@ -71,8 +71,7 @@ void VkContext::DrawFrame() {
   currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void VkContext::InitBeforeMainLoop() {
-}
+void VkContext::InitBeforeMainLoop() {}
 
 void VkContext::SetWindowAndResizeCallback(GLFWwindow* inWindow) {
   window = inWindow;
@@ -104,11 +103,11 @@ void VkContext::RecreateSwapChain() {
 }
 
 void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
-    uint32_t imageIndex) {
+                                    uint32_t imageIndex) {
   VkCommandBufferBeginInfo beginInfo{};
   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-  beginInfo.flags = 0;                   // Optional
-  beginInfo.pInheritanceInfo = nullptr;  // Optional
+  beginInfo.flags = 0; // Optional
+  beginInfo.pInheritanceInfo = nullptr; // Optional
 
   if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
     throw std::runtime_error("failed to begin recording command buffer!");
@@ -153,7 +152,7 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
   auto buffersSize = sizeof(modelVertices[0]) * modelVertices.size();
   auto vertexBufferMemoryWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
 
-  VkBuffer vertexBuffers[] = { vertexBufferMemoryWrapper->Buffer };
+  VkBuffer vertexBuffers[] = {vertexBufferMemoryWrapper->Buffer};
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
@@ -174,7 +173,7 @@ void VkContext::RecordCommandBuffer(VkCommandBuffer commandBuffer,
 }
 
 void VkContext::PerformTransforms() {
-  for(auto& test_vertex : modelVertices) {
+  for (auto& test_vertex : modelVertices) {
     auto deltaAngleRadians = glm::radians(1.0);
     deltaAngleRadians *= 0.05;
 
@@ -196,7 +195,7 @@ void VkContext::PerformVertexBufferCopying() {
   const auto& vertexBufferWrapper = pBuffersManager->GetVertexBufferWrapper(buffersSize);
 
   vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
-  memcpy(data, modelVertices.data(), (size_t) buffersSize);
+  memcpy(data, modelVertices.data(), (size_t)buffersSize);
   vkUnmapMemory(device, stagingBufferWrapper->Memory);
 
   CopyBuffer(stagingBufferWrapper->Buffer, vertexBufferWrapper->Buffer, buffersSize);
@@ -211,7 +210,7 @@ void VkContext::PerformIndexBufferCopying() {
 
   void* data;
   vkMapMemory(device, stagingBufferWrapper->Memory, 0, buffersSize, 0, &data);
-  memcpy(data, modelIndices.data(), (size_t) buffersSize);
+  memcpy(data, modelIndices.data(), (size_t)buffersSize);
   vkUnmapMemory(device, stagingBufferWrapper->Memory);
 
   CopyBuffer(stagingBufferWrapper->Buffer, indexBufferWrapper->Buffer, buffersSize);
@@ -227,7 +226,7 @@ void VkContext::UpdateUniformBuffer() {
   auto pos = glm::vec3(2.0f, 2.0f, 2.0f);
   // pos *= 1.0 + deltaTime ;
   ubo.view = glm::lookAt(pos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f, 10.0f);
+  ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
   ubo.proj[1][1] *= -1;
 }
 
@@ -235,33 +234,90 @@ void VkContext::PerformUniformBufferCopying() {
   memcpy(pBuffersManager->GetUniformBufferWrapper(currentFrame)->MappedMemory, &ubo, sizeof(ubo));
 }
 
+static float colorNormalizer = 255.0;
+static glm::vec4 ambientColor = {
+  150.0 / colorNormalizer,
+  0.0 / colorNormalizer,
+  255.0 / colorNormalizer,
+  0.1
+};
+
+static glm::vec4 pointColor1 = {
+  255.0 / colorNormalizer,
+  50.0 / colorNormalizer,
+  20.0 / colorNormalizer,
+  2.0
+};
+
+static glm::vec4 pointColor2 = {
+  20.0 / colorNormalizer,
+  50.0 / colorNormalizer,
+  255.0 / colorNormalizer,
+  2.0
+};
+
+
 void VkContext::UpdateLighting() {
   static auto startTime = std::chrono::high_resolution_clock::now();
 
   auto currentTime = std::chrono::high_resolution_clock::now();
   auto deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-  auto speed = 0.05f;
-  float azimuth   = glm::mod(deltaTime * speed, glm::two_pi<float>());
-  float elevation = glm::radians(45.0f);
+  {
+    auto rotateTime = 100.f;
+    float angle = glm::mod(deltaTime * glm::two_pi<float>() / rotateTime, glm::two_pi<float>());
+    glm::vec3 baseDir = glm::normalize(glm::vec3(1.0f, 0.0f, -1.0f));
+    lightingBO.global.direction = glm::rotateZ(baseDir, angle);
 
-  float x = cos(elevation) * cos(azimuth);
-  float y = cos(elevation) * sin(azimuth);
-  float z = -sin(elevation);
+    lightingBO.global.color = {1., 1., 1., 0.5};
+  }
 
-  lightingBO.lightingDirection = glm::normalize(glm::vec3(x, y, z));
+  lightingBO.ambient.color = ambientColor;
+
+  {
+    auto& pointLight = lightingBO.point[0];
+    pointLight.color = pointColor1;
+    pointLight.radius = 2.0f;
+
+    auto loopTime = 10.f;
+    auto left = -1.0f;
+    auto right = 1.0f;
+
+    const float pi = 3.14159265f;
+
+    float t = sin((deltaTime / loopTime) * 2.0f * pi) * 0.5f + 0.5f;
+    auto y = left + t * (right - left);
+
+    pointLight.position = {1.0, y, 0.5f};
+  }
+
+  {
+    auto& pointLight = lightingBO.point[1];
+    pointLight.color = pointColor2;
+    pointLight.radius = 1.5f;
+
+    auto loopTime = 10.f;
+    auto left = -1.0f;
+    auto right = 1.0f;
+
+    const float pi = 3.14159265f;
+
+    float t = sin((deltaTime / loopTime) * 2.0f * pi) * 0.5f + 0.5f;
+    auto x = left + t * (right - left);
+
+    pointLight.position = {x, 1.4, 0.5f};
+  }
 }
 
 void VkContext::PerformLightingBufferCopying() {
   memcpy(pBuffersManager->GetLightingBufferWrapper(currentFrame)->MappedMemory, &lightingBO, sizeof(lightingBO));
-
 }
 
 VkResult VkContext::PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands, uint32_t imageIndex) {
   VkSubmitInfo submitInfo{};
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-  VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
+  VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
   VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   submitInfo.waitSemaphoreCount = 1;
   submitInfo.pWaitSemaphores = waitSemaphores;
@@ -270,11 +326,11 @@ VkResult VkContext::PerformSubmitDrawCommandsAndPresent(VkCommandBuffer commands
   submitInfo.commandBufferCount = 1;
   submitInfo.pCommandBuffers = &commands;
 
-  VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+  VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
   submitInfo.signalSemaphoreCount = 1;
   submitInfo.pSignalSemaphores = signalSemaphores;
 
-  if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame] ) != VK_SUCCESS) {
+  if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
     throw std::runtime_error("failed to submit draw command buffer!");
   }
 
@@ -348,15 +404,14 @@ void VkContext::PerformImageLayoutTransition(VkImage image, VkFormat format, VkI
     throw std::invalid_argument("unsupported layout transition!");
   }
 
-
   vkCmdPipelineBarrier(
-    commandBuffer,
-    sourceStageMask, destinationStageMask,
-    0, // VK_DEPENDENCY_BY_REGION_BIT
-    0, nullptr,
-    0, nullptr,
-    1, &barrier
-);
+      commandBuffer,
+      sourceStageMask, destinationStageMask,
+      0, // VK_DEPENDENCY_BY_REGION_BIT
+      0, nullptr,
+      0, nullptr,
+      1, &barrier
+      );
 
   EndFastCommand(commandBuffer);
 }
@@ -377,7 +432,7 @@ void VkContext::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer,
 }
 
 void VkContext::CopyBufferToImage(VkBuffer buffer, VkImage image,
-    uint32_t width, uint32_t height) {
+                                  uint32_t width, uint32_t height) {
   VkCommandBuffer commandBuffer = BeginFastCommand();
   VkBufferImageCopy region{};
 
@@ -391,11 +446,11 @@ void VkContext::CopyBufferToImage(VkBuffer buffer, VkImage image,
   region.imageSubresource.layerCount = 1;
 
   region.imageOffset = {0, 0, 0};
-  region.imageExtent = { width, height, 1};
+  region.imageExtent = {width, height, 1};
 
   vkCmdCopyBufferToImage(commandBuffer, buffer, image,
-    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-    1, &region);
+                         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                         1, &region);
 
   EndFastCommand(commandBuffer);
 }
@@ -439,6 +494,6 @@ void VkContext::EndFastCommand(const VkCommandBuffer& commandBuffer) {
 }
 
 void VkContext::FramebufferResizeCallback(GLFWwindow* window, int width, int height) {
-  auto* appPtr = (VkContext*) glfwGetWindowUserPointer(window);
+  auto* appPtr = (VkContext*)glfwGetWindowUserPointer(window);
   appPtr->framebufferResized = true;
 }
